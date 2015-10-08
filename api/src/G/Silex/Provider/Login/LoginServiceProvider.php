@@ -20,8 +20,8 @@ class LoginServiceProvider implements ServiceProviderInterface {
             return $this->validateCredentials($user, $pass);
         });
 
-        $app[self::AUTH_VALIDATE_TOKEN] = $app->protect(function ($token) {
-            return $this->validateToken($token);
+        $app[self::AUTH_VALIDATE_TOKEN] = $app->protect(function ($requestData) {
+            return $this->validateToken($requestData);
         });
 
         $app[self::AUTH_NEW_TOKEN] = $app->protect(function ($user) {
@@ -41,8 +41,10 @@ class LoginServiceProvider implements ServiceProviderInterface {
         return $loginCorrect;
     }
 
-    private function validateToken($token) {
-        return $token == 'a';
+    private function validateToken($requestData) {
+        $user = $this->getUserByEmail($requestData['email']);
+
+        return $user->getCustomField('login_token') == $requestData['token'];
     }
 
     private function getNewTokenForUser($email) {
@@ -52,6 +54,7 @@ class LoginServiceProvider implements ServiceProviderInterface {
         $user->setCustomField('login_token', $token);
 
         $this->application['user.manager']->update($user);
+
         return $token;
     }
 

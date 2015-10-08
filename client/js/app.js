@@ -36,10 +36,12 @@ appControllers.controller('HomeController', ['$scope', 'httpG', '$location', fun
 appControllers.controller('MainController', ['$scope', '$location', 'httpG', function ($scope, $location, httpG) {
     $scope.isAuthenticated = false;
 
-    if (httpG.getToken()) {
+    if(httpG.getToken()) {
         $scope.isAuthenticated = true;
+
         $location.path('home');
-    } else {
+    }
+    else {
         $location.path('login');
     }
 }]);
@@ -51,7 +53,7 @@ appControllers.controller('LoginController', ['$scope', '$location', 'httpG', fu
     $scope.doLogIn = function () {
         httpG.get('/auth/validateCredentials', {user: $scope.user.username, pass: $scope.user.password}).success(function (data) {
             if (data.status) {
-                httpG.setToken(data.info.token);
+                httpG.setToken(data.info.token, $scope.user.username);
                 $scope.isAuthenticated = true;
                 $location.path('home');
             } else {

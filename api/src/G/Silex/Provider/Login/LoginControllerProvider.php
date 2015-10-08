@@ -11,6 +11,7 @@ class LoginControllerProvider implements ControllerProviderInterface {
     const VALIDATE_CREDENTIALS = '/validateCredentials';
     const TOKEN_HEADER_KEY     = 'X-Token';
     const TOKEN_REQUEST_KEY    = '_token';
+    const EMAIL_REQUEST_KEY    = '_userEmail';
 
     private $baseRoute;
 
@@ -44,22 +45,27 @@ class LoginControllerProvider implements ControllerProviderInterface {
     private function setUpMiddlewares(Application $app) {
         $app->before(function (Request $request) use ($app) {
             if (!$this->isAuthRequiredForPath($request->getPathInfo())) {
-                if (!$this->isValidTokenForApplication($app, $this->getTokenFromRequest($request))) {
+                if (!$this->isValidTokenForApplication($app, $this->getTokenAndEmailFromRequest($request))) {
                     throw new AccessDeniedHttpException('Access Denied');
                 }
             }
         });
     }
 
-    private function getTokenFromRequest(Request $request) {
-        return $request->headers->get(self::TOKEN_HEADER_KEY, $request->get(self::TOKEN_REQUEST_KEY));
+    private function getTokenAndEmailFromRequest(Request $request) {
+        $result = array(
+            'token' => $request->headers->get(self::TOKEN_HEADER_KEY, $request->get(self::TOKEN_REQUEST_KEY)),
+            'email' => $request->headers->get(self::EMAIL_REQUEST_KEY, $request->get(self::EMAIL_REQUEST_KEY))
+        );
+
+        return $result;
     }
 
     private function isAuthRequiredForPath($path) {
         return in_array($path, [$this->baseRoute . self::VALIDATE_CREDENTIALS]);
     }
 
-    private function isValidTokenForApplication(Application $app, $token) {
-        return $app[LoginServiceProvider::AUTH_VALIDATE_TOKEN]($token);
+    private function isValidTokenForApplication(Application $app, $requestData) {
+        return $app[LoginServiceProvider::AUTH_VALIDATE_TOKEN]($requestData);
     }
 }
