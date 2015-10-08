@@ -1,6 +1,7 @@
 'use strict';
+
 var appControllers, G;
-var host = 'http://localhost:8080'; // server API url
+var host = 'http://localhost:8080';
 
 appControllers = angular.module('appControllers', []);
 G = angular.module('G', ['ngRoute', 'appControllers']);

@@ -36,8 +36,8 @@ $app->register($simpleUserProvider);
 
 $app['security.firewalls'] = array(
 	'secured_area' => array(
-		'anonymous' => true,
-		'users' => $app->share(function($app) { return $app['user.manager']; }),
+		'pattern'   => '/api',
+		'anonymous' => true
 	),
 );
 

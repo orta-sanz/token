@@ -42,7 +42,6 @@ class LoginServiceProvider implements ServiceProviderInterface {
     }
 
     private function validateToken($token) {
-        var_dump($this->application['user.manager']->getCurrentUser());die();
         return $token == 'a';
     }
 

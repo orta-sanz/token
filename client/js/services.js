@@ -3,11 +3,12 @@
 G.factory('httpG', ['$http', '$window', function ($http, $window) {
     var serviceToken, serviceHost, tokenKey;
     tokenKey = 'token';
-    if (localStorage.getItem(tokenKey)) {
-        serviceToken = $window.localStorage.getItem(tokenKey);
-    }
 
-    $http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
+    if(localStorage.getItem(tokenKey)) {
+        serviceToken = $window.localStorage.getItem(tokenKey);
+    };
+
+    $http.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
     return {
         setHost: function (host) {
@@ -20,6 +21,7 @@ G.factory('httpG', ['$http', '$window', function ($http, $window) {
         },
 
         getToken: function () {
+            console.log(serviceToken);
             return serviceToken;
         },
 
