@@ -6,6 +6,7 @@ use Silex\Application;
 use Silex\ServiceProviderInterface;
 
 class LoginServiceProvider implements ServiceProviderInterface {
+
     const AUTH_VALIDATE_CREDENTIALS = 'auth.validate.credentials';
     const AUTH_VALIDATE_TOKEN       = 'auth.validate.token';
     const AUTH_NEW_TOKEN            = 'auth.new.token';
@@ -31,19 +32,31 @@ class LoginServiceProvider implements ServiceProviderInterface {
     public function boot(Application $app) { }
 
     private function validateCredentials($user, $pass) {
-        $user = $this->application['user.manager']->findOneBy(array('email' => $user));
-        $passIsCorrect = $user
+        $user = $this->getUserByEmail($user);
+
+        $loginCorrect = $user
             ? $this->application['user.manager']->checkUserPassword($user, $pass)
             : false;
 
-        return $passIsCorrect;
+        return $loginCorrect;
     }
 
     private function validateToken($token) {
+        var_dump($this->application['user.manager']->getCurrentUser());die();
         return $token == 'a';
     }
 
-    private function getNewTokenForUser($user) {
-        return 'a';
+    private function getNewTokenForUser($email) {
+        $user = $this->getUserByEmail($email);
+
+        $token = $this->application['user.tokenGenerator']->generateToken();
+        $user->setCustomField('login_token', $token);
+        $this->application['user.manager']->update($user);
+
+        return $token;
+    }
+
+    private function getUserByEmail($mail) {
+        return $this->application['user.manager']->findOneBy(array('email' => $mail));
     }
 }
