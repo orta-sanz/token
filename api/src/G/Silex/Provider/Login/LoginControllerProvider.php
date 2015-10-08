@@ -17,12 +17,12 @@ class LoginControllerProvider implements ControllerProviderInterface {
     public function setBaseRoute($baseRoute) {
         $this->baseRoute = $baseRoute;
         return $this;
-    };
+    }
 
     public function connect(Application $app) {
         $this->setUpMiddlewares($app);
         return $this->extractControllers($app);
-    };
+    }
 
     private function extractControllers(Application $app) {
         $controllers = $app['controllers_factory'];
@@ -39,7 +39,7 @@ class LoginControllerProvider implements ControllerProviderInterface {
         });
 
         return $controllers;
-    };
+    }
 
     private function setUpMiddlewares(Application $app) {
         $app->before(function (Request $request) use ($app) {
@@ -49,17 +49,17 @@ class LoginControllerProvider implements ControllerProviderInterface {
                 }
             }
         });
-    };
+    }
 
     private function getTokenFromRequest(Request $request) {
         return $request->headers->get(self::TOKEN_HEADER_KEY, $request->get(self::TOKEN_REQUEST_KEY));
-    };
+    }
 
     private function isAuthRequiredForPath($path) {
         return in_array($path, [$this->baseRoute . self::VALIDATE_CREDENTIALS]);
-    };
+    }
 
     private function isValidTokenForApplication(Application $app, $token) {
         return $app[LoginServiceProvider::AUTH_VALIDATE_TOKEN]($token);
-    };
+    }
 }

@@ -1,2 +1,3 @@
 api/vendor
 client/bower_components
+api/www/.htaccess
