@@ -11,6 +11,9 @@ use Silex\Provider;
 
 $app = new Application();
 
+/* DEBUG */
+$app['debug'] = true;
+
 $app->register(
 	new Silex\Provider\DoctrineServiceProvider(),
 	array(
@@ -25,10 +28,18 @@ $app->register(
 	)
 );
 
+// Security
 $app->register(new Provider\SecurityServiceProvider());
+
 $simpleUserProvider = new SimpleUser\UserServiceProvider();
 $app->register($simpleUserProvider);
-$app['security.firewalls'] = array();
+
+$app['security.firewalls'] = array(
+	'secured_area' => array(
+		'anonymous' => true,
+		'users' => $app->share(function($app) { return $app['user.manager']; }),
+	),
+);
 
 $app->get('/api/info', function (Application $app) {
     return $app->json([

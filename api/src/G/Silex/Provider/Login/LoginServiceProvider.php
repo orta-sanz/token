@@ -51,8 +51,8 @@ class LoginServiceProvider implements ServiceProviderInterface {
 
         $token = $this->application['user.tokenGenerator']->generateToken();
         $user->setCustomField('login_token', $token);
-        $this->application['user.manager']->update($user);
 
+        $this->application['user.manager']->update($user);
         return $token;
     }
 
